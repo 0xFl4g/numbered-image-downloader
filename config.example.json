@@ -1,0 +1,9 @@
+{
+    "base_url": "https://example.com/image_{:04d}.jpg",
+    "start": 1,
+    "end": 100,
+    "output_dir": "images",
+    "timeout": 30,
+    "max_retries": 3,
+    "concurrent_downloads": 20
+}

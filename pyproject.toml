@@ -1,0 +1,22 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "numbered-image-downloader"
+version = "0.1.0"
+description = "Download numbered images from Google Cloud Storage"
+requires-python = ">=3.10"
+dependencies = [
+    "requests>=2.32.5",
+]
+
+[project.scripts]
+download = "download_images:main"
+
+[tool.uv]
+package = true
+
+[tool.hatch.build.targets.wheel]
+packages = ["."]
+only-include = ["download_images.py"]
