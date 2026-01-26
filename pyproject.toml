@@ -8,7 +8,18 @@ version = "0.1.0"
 description = "Download numbered images from Google Cloud Storage"
 requires-python = ">=3.10"
 dependencies = [
-    "requests>=2.32.5",
+    "aiohttp>=3.9.0",
+    "tqdm>=4.66.0",
+]
+
+[project.optional-dependencies]
+test = [
+    "pytest>=8.0.0",
+    "pytest-asyncio>=0.24.0",
+    "aioresponses>=0.7.6",
+]
+dev = [
+    "ruff>=0.8.0",
 ]
 
 [project.scripts]
@@ -20,3 +31,32 @@ package = true
 [tool.hatch.build.targets.wheel]
 packages = ["."]
 only-include = ["download_images.py"]
+
+[tool.pytest.ini_options]
+testpaths = ["."]
+python_files = ["test_*.py"]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"
+
+[tool.ruff]
+target-version = "py310"
+line-length = 100
+
+[tool.ruff.lint]
+select = [
+    "E",      # pycodestyle errors
+    "W",      # pycodestyle warnings
+    "F",      # pyflakes
+    "I",      # isort
+    "B",      # flake8-bugbear
+    "C4",     # flake8-comprehensions
+    "UP",     # pyupgrade
+    "ARG",    # flake8-unused-arguments
+    "SIM",    # flake8-simplify
+    "TCH",    # flake8-type-checking
+    "PTH",    # flake8-use-pathlib
+    "RUF",    # ruff-specific rules
+]
+ignore = [
+    "E501",   # line too long (handled by formatter)
+]

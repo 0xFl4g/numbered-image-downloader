@@ -6,6 +6,9 @@ dist/
 wheels/
 *.egg-info
 
+# Test cache
+.pytest_cache/
+
 # Virtual environments
 .venv
 .python-version
@@ -14,7 +17,7 @@ wheels/
 config.json
 
 # Downloaded images
-images/
+images*/
 *.tmp
 
 # macOS
