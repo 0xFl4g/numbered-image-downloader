@@ -28,6 +28,7 @@ logger = logging.getLogger(__name__)
 
 class Config(TypedDict, total=False):
     """Configuration schema for the downloader."""
+
     base_url: str  # Required
     start: int  # Required
     end: int  # Required
@@ -40,6 +41,7 @@ class Config(TypedDict, total=False):
 
 class DownloadResult:
     """Result of a download attempt."""
+
     __slots__ = ("bytes_downloaded", "message", "success", "url")
 
     def __init__(self, url: str, success: bool, message: str, bytes_downloaded: int = 0):
@@ -70,8 +72,10 @@ def load_config(config_path: str) -> Config:
         with Path(config_path).open() as f:
             config: Config = json.load(f)
     except FileNotFoundError:
-        sys.exit(f"Error: Config file '{config_path}' not found.\n"
-                 f"Copy config.example.json to {config_path} and edit it.")
+        sys.exit(
+            f"Error: Config file '{config_path}' not found.\n"
+            f"Copy config.example.json to {config_path} and edit it."
+        )
     except json.JSONDecodeError as e:
         sys.exit(f"Error: Invalid JSON in '{config_path}': {e}")
 
@@ -222,10 +226,7 @@ class AsyncImageDownloader:
                 async with semaphore:
                     return await self.download(session, url, path)
 
-            pending = {
-                asyncio.create_task(bounded_download(url, path))
-                for url, path in tasks
-            }
+            pending = {asyncio.create_task(bounded_download(url, path)) for url, path in tasks}
 
             while pending:
                 if self.shutdown_event.is_set():
@@ -368,7 +369,9 @@ async def async_main(args: argparse.Namespace) -> None:
 
         logger.info("-" * 50)
         if corrupted:
-            logger.info(f"Found {len(corrupted)} corrupted files. Run without --verify to re-download.")
+            logger.info(
+                f"Found {len(corrupted)} corrupted files. Run without --verify to re-download."
+            )
         else:
             logger.info(f"All {len(existing_files)} files verified OK.")
         return
@@ -409,8 +412,12 @@ async def async_main(args: argparse.Namespace) -> None:
     downloader = AsyncImageDownloader(timeout, max_retries, concurrent, shutdown_event)
 
     try:
-        with tqdm(unit="B", unit_scale=True, unit_divisor=1024, desc="Speed", position=0) as pbar_bytes, \
-             tqdm(total=len(tasks), unit="img", desc="Images", position=1) as pbar_imgs:
+        with (
+            tqdm(
+                unit="B", unit_scale=True, unit_divisor=1024, desc="Speed", position=0
+            ) as pbar_bytes,
+            tqdm(total=len(tasks), unit="img", desc="Images", position=1) as pbar_imgs,
+        ):
             downloaded, failed, not_found, skipped, total_bytes = await downloader.download_all(
                 tasks, checksums, pbar_bytes, pbar_imgs
             )
@@ -446,12 +453,18 @@ async def async_main(args: argparse.Namespace) -> None:
 
 def main():
     parser = argparse.ArgumentParser(description="Download numbered images from URLs")
-    parser.add_argument("-c", "--config", default="config.json",
-                        help="Path to config file (default: config.json)")
-    parser.add_argument("-n", "--dry-run", action="store_true",
-                        help="Show what would be downloaded without downloading")
-    parser.add_argument("-v", "--verify", action="store_true",
-                        help="Verify existing files only, don't download")
+    parser.add_argument(
+        "-c", "--config", default="config.json", help="Path to config file (default: config.json)"
+    )
+    parser.add_argument(
+        "-n",
+        "--dry-run",
+        action="store_true",
+        help="Show what would be downloaded without downloading",
+    )
+    parser.add_argument(
+        "-v", "--verify", action="store_true", help="Verify existing files only, don't download"
+    )
     args = parser.parse_args()
 
     asyncio.run(async_main(args))

@@ -178,6 +178,7 @@ class TestAsyncImageDownloader:
             m.get(url, body=b"fake image content")
 
             import aiohttp
+
             async with aiohttp.ClientSession() as session:
                 result = await downloader.download(session, url, output_path)
 
@@ -204,6 +205,7 @@ class TestAsyncImageDownloader:
             m.get(url, status=404)
 
             import aiohttp
+
             async with aiohttp.ClientSession() as session:
                 result = await downloader.download(session, url, output_path)
 
